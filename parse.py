@@ -56,8 +56,8 @@ class InputParse:
         self.edge_weights[c][t] += 1
         self.cx_graph.add_edge(c, t)
         self.cx_graph.adj[c][t]['weight'] = self.edge_weights[c][t]
-        self.cx_graph.node[c]['node_weight'] = 1
-        self.cx_graph.node[t]['node_weight'] = 1
+        self.cx_graph.nodes[c]['node_weight'] = 1
+        self.cx_graph.nodes[t]['node_weight'] = 1
 
     def process_gate(self, line):
         for g in gset1:
