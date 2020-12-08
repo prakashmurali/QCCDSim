@@ -28,6 +28,11 @@ class InputParse:
         self.gset.extend(gset1)
         self.gset.extend(gset2)
         self.gset.extend(gset3)
+        self.qbit_count = 0
+        # make note of every two qubit gate's global gate id
+        # even so, how will the mapper know the ids of the gates it receives from
+        # InputParse?
+        self.two_qubit_gate_list = []
  
     def find_dep_gate(self, qbit):
         if qbit in self.prev_gate.keys():
@@ -62,10 +67,29 @@ class InputParse:
     def process_gate(self, line):
         for g in gset1:
             if line.startswith(g):
-                return
+                qbit = int(line.split('[')[1].split(']')[0])
+                if not self.check_valid_qbit(qbit):
+                    sys.exit("qbit " + str(qbit) + " not in range")
+
+                dep_gates = self.find_dep_gate(qbit)
+                self.update_dep_gate(qbit, self.global_gate_id)
+                for dgate in dep_gates:
+                    print("qbit " + str(qbit) + " dep gates: " + str(dgate))
+                    self.gate_graph.add_edge(dgate, self.global_gate_id)
+                self.global_gate_id += 1
         for g in gset2:
             if line.startswith(g):
-                return
+                qbit = int(line.split('[')[1].split(']')[0])
+                if not self.check_valid_qbit(qbit):
+                    sys.exit("qbit " + str(qbit) + " not in range")
+                # theta = float(line.split('(')[1].split(')')[0])
+
+                dep_gates = self.find_dep_gate(qbit)
+                self.update_dep_gate(qbit, self.global_gate_id)
+                for dgate in dep_gates:
+                    print("qbit " + str(qbit) + " dep gates: " + str(dgate))
+                    self.gate_graph.add_edge(dgate, self.global_gate_id)
+                self.global_gate_id += 1
         for g in gset3:
              if line.startswith(g):
                 base = ''.join(line.split()).split(',')
@@ -79,6 +103,7 @@ class InputParse:
                 self.update_dep_gate(qbit2, self.global_gate_id)
                 self.cx_gate_map[self.global_gate_id] = [qbit1, qbit2]
                 for dgate in dep_gates1:
+                    print("qbit 1: " + str(qbit1) + " qbit 2: " + str(qbit2) + " dep gates: " + str(dgate))
                     self.gate_graph.add_edge(dgate, self.global_gate_id)
                 self.global_gate_id += 1
          
@@ -92,7 +117,7 @@ class InputParse:
             elif line.startswith("include"):
                 continue
             elif line.startswith("qreg"):
-                continue
+                self.qbit_count = int(line.split('[')[1].split(']')[0])
             elif line.startswith("creg"):
                 continue
             else:
@@ -106,7 +131,8 @@ class InputParse:
     def get_ir(self):
         return self.cx_gate_map, self.gate_graph
 
-    def visualize_graph(fname):
-        nx.write_gexf(cx_graph, fname)
+    def visualize_graph(self, fname):
+        nx.write_gexf(self.cx_graph, fname)
 
-
+    def check_valid_qbit(self, qbit):
+        return qbit >= 0 and qbit < self.qbit_count

@@ -11,3 +11,6 @@ __pycache__
 
 # output logs
 *.log
+
+# graphs
+*.gexf

@@ -6,6 +6,9 @@ from ejf_schedule import Schedule, EJFSchedule
 from analyzer import *
 from test_machines import *
 import numpy as np
+from qiskit import QuantumCircuit
+from qiskit.converters import circuit_to_dag
+from qiskit.visualization import dag_drawer
 
 np.random.seed(12345)
 
@@ -75,6 +78,16 @@ else:
 #Parse the input program DAG
 ip = InputParse()
 ip.parse_ir(openqasm_file_name)
+ip.visualize_graph("visualize_graph_2.gexf") # dumps parser graph into file
+
+qc = QuantumCircuit.from_qasm_file(openqasm_file_name)
+dag = circuit_to_dag(qc)
+dag_drawer(dag)
+
+print("parse object map:")
+print(ip.cx_gate_map)
+print("parse object graph:")
+print(ip.gate_graph)
 
 #Map the program onto the machine regions
 #For every program qubit, this gives a region id

@@ -41,6 +41,13 @@ class QubitMapGreedy:
     def build_program_graph(self):
         self.prog_graph = nx.Graph()
         edge_weights = {}
+        # add support for single qubit (not cx gates)
+        # check gate id or get node label in networkx
+        # if single qubit, skip over this whole part
+        # try printing out parse_obj - the gate ids are there
+        # when you get an id, check if it exists in the cx_gate_map
+        # if it does, then it is a 2 qubit gate
+        # if not, then continue
         for g in self.parse_obj.gate_graph:
             g_qubits = self.parse_obj.cx_gate_map[g]
             tup = self.gate_tuple(g_qubits)

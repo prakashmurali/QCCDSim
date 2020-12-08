@@ -1,16 +1,16 @@
 import subprocess as sp
 import os
 
-PROG=["programs/bv64.qasm"]
+PROG=["programs/bv64_cut.qasm"]
 
 output_file = open('output.log','w')
 
 MACHINE=["L6"]
 
-IONS = []
-for i in range(14, 35, 2):
-    IONS.append(str(i))
-print(IONS)
+IONS = ["14"]
+# for i in range(14, 35, 2):
+#     IONS.append(str(i))
+# print(IONS)
 
 mapper = "Greedy"
 reorder = "Naive"
