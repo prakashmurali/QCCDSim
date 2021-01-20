@@ -4,10 +4,6 @@ Machine class definition
 import networkx as nx
 import numpy as np
 
-'''
-Each trap has a capacity
-PM: I believe the ions object of a trap is not currently used, I use a separate class called MachineState to track state
-'''
 class Trap:
     def __init__(self, idx, capacity):
         self.id = idx
@@ -80,13 +76,7 @@ class Machine:
     def print_machine_stats(self):
         trap_id = 0
         trap_capacity = self.traps[trap_id].capacity
-        #max_gate_time = self.alpha*((trap_capacity*self.inter_ion_dist)**3)
-        #print("cap, max_gate_time:",trap_capacity, max_gate_time)
-        #print("split_time:", self.split_time(0))
-        #print("move_time:", self.move_time(0, 1)) #Seg id's are currently not used
 
-    #Gate time is computed according to the model suggested by Ken
-    #gate time between two ions at distance ion-dist is alpha*ion_dist^3 +  beta
     def gate_time(self, sys_state, trap_id, ion1, ion2):
         assert ion1 != ion2
         mp = self.mparams
@@ -94,7 +84,6 @@ class Machine:
         p2 = sys_state.trap_ions[trap_id].index(ion2)
         d_const = 1 #um
         ion_dist = abs(p1-p2)*d_const
-        #t = mp.alpha*(ion_dist**3) + mp.beta #Ken ditched this model
         if mp.gate_type == "Duan":
             t = -22 + 100*ion_dist
         elif mp.gate_type == "Trout":
